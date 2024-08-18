@@ -184,11 +184,13 @@ WifiDefinition::WifiDefinition(const char* ssid, const char* password)
 
 void WifiDefinition::setSSID(const char* ssid)
 {
+    this->ssid = new char[strlen(ssid) + 1];
     strcpy((char*)this->ssid, ssid);
 };
 
 void WifiDefinition::setPassword(const char* password)
 {
+    this->password = new char[strlen(password) + 1];
     strcpy((char*)this->password, password);
 };
 

@@ -88,8 +88,8 @@ void Task1code(void *parameter)
 }
 
 // WIFI
-#define EXAMPLE_ESP_WIFI_SSID "WIFI_NAME"
-#define EXAMPLE_ESP_WIFI_PASS "WIFI_PASSWORD"
+#define EXAMPLE_ESP_WIFI_SSID "SSID_NAME"
+#define EXAMPLE_ESP_WIFI_PASS "SSID_PASSWORD"
 
 // IR Sensor
 constexpr adc_channel_t adcChannel = ADC_CHANNEL_6;  // ADC channel for the sensor (GPIO 7)
@@ -98,6 +98,9 @@ constexpr adc_bitwidth_t adcWidth = ADC_BITWIDTH_12; // ADC resolution
 
 void app_main()
 {
+    esp_log_level_set(TAG, ESP_LOG_VERBOSE);
+    esp_log_level_set("wifi station", ESP_LOG_VERBOSE);
+
     ESP_LOGI(TAG, "Hello World!");
 
     // OLED
@@ -118,13 +121,13 @@ void app_main()
 
     // LED
     configure_led();
-    xTaskCreatePinnedToCore(Task1code, "Task1", 10000, NULL, 5, &Task1, 0);
+    xTaskCreatePinnedToCore(Task1code, "Task1", 10000, NULL, 5, &Task1, 1);
 
     // Initialize ADC
     adc_oneshot_unit_handle_t adc_handle;
     adc_oneshot_unit_init_cfg_t adc_init_cfg = {
         .unit_id = ADC_UNIT_1,
-        .ulp_mode = ADC_ULP_MODE_DISABLE,
+        .ulp_mode = ADC_ULP_MODE_DISABLE
     };
     ESP_ERROR_CHECK(adc_oneshot_new_unit(&adc_init_cfg, &adc_handle));
     //-------------ADC1 Config---------------//
@@ -135,7 +138,6 @@ void app_main()
     ESP_ERROR_CHECK(adc_oneshot_config_channel(adc_handle, adcChannel, &adc_chan_cfg));
 
     // WIFI
-    WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0); // Disable brownout detector
     ESP_LOGI(TAG, "Connecting to AP");
     WifiDefinition wificontroller = WifiDefinition();
     wificontroller.setSSID(EXAMPLE_ESP_WIFI_SSID);
